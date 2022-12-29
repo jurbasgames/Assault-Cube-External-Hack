@@ -16,6 +16,9 @@
     <Filter Include="Process">
       <UniqueIdentifier>{32795bdc-83d2-4530-a17e-25e65386faf9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mem">
+      <UniqueIdentifier>{21ed313d-d799-4037-9df7-5b5c5a4dd6f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assault Cube Hack.cpp">
@@ -24,6 +27,9 @@
     <ClCompile Include="proc.cpp">
       <Filter>Process</Filter>
     </ClCompile>
+    <ClCompile Include="mem.cpp">
+      <Filter>mem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -31,6 +37,9 @@
     </ClInclude>
     <ClInclude Include="proc.h">
       <Filter>Process</Filter>
+    </ClInclude>
+    <ClInclude Include="mem.h">
+      <Filter>mem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

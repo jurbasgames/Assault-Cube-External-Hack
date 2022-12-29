@@ -6,39 +6,52 @@
 #include <vector>
 #include <Windows.h>
 #include "proc.h"
+#include "mem.h"
 
 
 int main()
 {   
     int ammoOffset = 0x17E0A8;
+    std::vector<unsigned int> ammoOffsets = { 0x368, 0x14, 0x0 };
+    bool ammoActive = false;
 
     DWORD procId = GetProcessId(L"ac_client.exe");
+    if (procId == 0) {
+        std::cout << "Process not found" << std::endl;
+        getchar();
+        return 0;
+    }
+    
     uintptr_t moduleBase = GetmoduleAddress(procId, L"ac_client.exe");
 
     HANDLE hProcess = 0;
     hProcess = OpenProcess(PROCESS_ALL_ACCESS, NULL, procId);
 
     uintptr_t dynamicPtrBaseAddr = moduleBase + ammoOffset;
-
-    std::cout << "moduleBase = " << "0x" << std::hex << moduleBase << std::endl;
-    std::cout << "DynamicPtrBaseAddr = " << "0x" << std::hex << dynamicPtrBaseAddr << std::endl;
-
-    std::vector<unsigned int> ammoOffsets = { 0x140 };
     uintptr_t ammoAddr = FindDMAAddy(hProcess, dynamicPtrBaseAddr, ammoOffsets);
 
-    std::cout << "ammoAddr = " << "0x" << std::hex << ammoAddr << std::endl;
 
-    int ammoValue = 0;
-    ReadProcessMemory(hProcess, (BYTE*)ammoAddr, &ammoValue, sizeof(ammoValue), nullptr);
-    std::cout << "Current ammo = " << std::dec << ammoValue << std::endl;
+    DWORD dwExit = 0;
+    while (GetExitCodeProcess(hProcess, &dwExit) && dwExit == STILL_ACTIVE)
+    {
+        if (GetAsyncKeyState(VK_F1) & 1) {
+            ammoActive = !ammoActive;
+        }
 
-    int newAmmo = 99999;
-    WriteProcessMemory(hProcess, (BYTE*)ammoAddr, &newAmmo, sizeof(newAmmo), nullptr);
+        if (ammoActive) {
+            int newAmmo = 999;
+            WriteProcessMemory(hProcess, (BYTE*)ammoAddr, &newAmmo, sizeof(newAmmo), nullptr);
+            Sleep(10);
+        }
+        if (GetAsyncKeyState(VK_HOME) & 1) {
+            return 0;
+        }
+    }
 
-    ReadProcessMemory(hProcess, (BYTE*)ammoAddr, &ammoValue, sizeof(ammoValue), nullptr);
-    std::cout << "New ammo = " << std::dec << ammoValue << std::endl;
 
-    getchar();
-    return 0;
+
+
+
+
 
 }

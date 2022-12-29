@@ -1,5 +1,6 @@
 #include "proc.h"
 #include "stdafx.h"
+#include <iostream>
 
 DWORD GetProcessId(const WCHAR* procName) {
 	DWORD procId = 0;
@@ -46,8 +47,9 @@ uintptr_t GetmoduleAddress(DWORD procId, const WCHAR* modName) {
 uintptr_t FindDMAAddy(HANDLE hProc, uintptr_t ptr, std::vector<unsigned int> offsets) {
 	uintptr_t addr = ptr;
 	for (unsigned int i = 0; i < offsets.size(); ++i) {
-		ReadProcessMemory(hProc, (BYTE*)addr, &addr, sizeof(addr), 0);
-		addr += offsets[i];
+		ReadProcessMemory(hProc, (BYTE*)addr, &addr, 4, 0);
+		addr = offsets[i] + addr;
+		std::cout << i << "addr = " << addr << std::endl;
 	}
 	return addr;
 }
