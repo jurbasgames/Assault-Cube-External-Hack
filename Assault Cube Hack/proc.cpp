@@ -49,7 +49,6 @@ uintptr_t FindDMAAddy(HANDLE hProc, uintptr_t ptr, std::vector<unsigned int> off
 	for (unsigned int i = 0; i < offsets.size(); ++i) {
 		ReadProcessMemory(hProc, (BYTE*)addr, &addr, 4, 0);
 		addr = offsets[i] + addr;
-		std::cout << i << "addr = " << addr << std::endl;
 	}
 	return addr;
 }
