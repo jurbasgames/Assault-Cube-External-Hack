@@ -15,6 +15,8 @@ int main()
     std::vector<unsigned int> healthOffsets = { 0xEC };
     bool ammoActive = false;
     bool infHealth = false;
+    bool noRecoil = false;
+    bool noKnockback = false;
 
     DWORD procId = GetProcessId(L"ac_client.exe");
     if (procId == 0) {
@@ -34,6 +36,8 @@ int main()
 
     std::cout << "[F1] - Infinite Ammo" << std::endl;
     std::cout << "[F2] - Infinite Health" << std::endl;
+    std::cout << "[F3] - No Recoil" << std::endl;
+    std::cout << "[F4] - No Knockback" << std::endl;
     std::cout << "[HOME] - Exit" << std::endl;
 
     DWORD dwExit = 0;
@@ -48,16 +52,16 @@ int main()
         if (GetAsyncKeyState(VK_F1) & 1) {
             ammoActive = !ammoActive;
             if (ammoActive) {
-                std::cout << "Ammo Activated" << std::endl;
+                std::cout << "Ammo ON" << std::endl;
             } else {
-                std::cout << "Ammo Deactivated" << std::endl;
+                std::cout << "Ammo OFF" << std::endl;
             }
         }
 
         if (ammoActive) {
             int newAmmo = 999;
             WriteProcessMemory(hProcess, (BYTE*)ammoAddr, &newAmmo, sizeof(newAmmo), nullptr);
-            Sleep(50);
+            Sleep(10);
         }
 
 
@@ -65,20 +69,45 @@ int main()
         if (GetAsyncKeyState(VK_F2) & 1) {
             infHealth = !infHealth;
             if (infHealth) {
-                std::cout << "Health Activated" << std::endl;
+                std::cout << "Health ON" << std::endl;
             }
             else {
-                std::cout << "Health Deactivated" << std::endl;
+                std::cout << "Health OFF" << std::endl;
             }
         }
 
         if (infHealth) {
             int newHealth = 999;
             WriteProcessMemory(hProcess, (BYTE*)heathAddr, &newHealth, sizeof(newHealth), nullptr);
-            Sleep(50);
+            Sleep(10);
         }
 
+        //No Recoil
+        if (GetAsyncKeyState(VK_F3) & 1) {
+            noRecoil = !noRecoil;
+            if (noRecoil) {
+                mem::NopEx((BYTE*)(moduleBase + 0xC8E52), 5, hProcess);
+                std::cout << "No Recoil ON" << std::endl;
+            }
+            else {
+                mem::PatchEx((BYTE*)(moduleBase + 0xC8E3B), (BYTE*)"\xF3\x0F\x11\x50\x40", 5, hProcess);
+                std::cout << "No Recoil OFF" << std::endl;
+            }
         
+        }
+        // No Knockback
+        if (GetAsyncKeyState(VK_F4) & 1) {
+            noKnockback = !noKnockback;
+            if (noKnockback) {
+                mem::PatchEx((BYTE*)(moduleBase + 0xC8861), (BYTE*)"\xB8\x00\x00\x00\x00\x90\x90", 7, hProcess);
+                std::cout << "No Knockback ON" << std::endl;
+            }
+            else {
+                mem::PatchEx((BYTE*)(moduleBase + 0xC8861), (BYTE*)"\x8B\x41\x0C\x0F\xBF\x40\x54", 7, hProcess);
+                std::cout << "No Knockback OFF" << std::endl;
+            }
+
+        }
              
     }
 
