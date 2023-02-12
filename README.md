@@ -7,8 +7,3 @@ An Assault Cube External hack from Guided Hacking tutorials.
 | F1     | Infinite Ammo     |
 | F2     | Infinite Health     |
 | Home     | Exit     | 
-
-### Todo List
-* Infinite Health
-* Esp
-* Aimbot
